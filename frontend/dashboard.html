@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="refresh" content="10" />
+  <title>{{MARKET_ASSET}} {{CANDLE_MINUTES}}m Bot</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: "Courier New", monospace;
+      padding: 1.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* ── header ── */
+    header { margin-bottom: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
+    header h1 { color: #f90; font-size: 1.5rem; letter-spacing: .03em; }
+    .sub { color: #444; font-size: .8rem; margin-top: .35rem; }
+    .sub a { color: #555; text-decoration: none; }
+    .sub a:hover { color: #888; }
+
+    /* ── reset button ── */
+    .btn-reset {
+      background: #1a1a1a; color: #ef4444;
+      border: 1px solid #3f1a1a; border-radius: 6px;
+      padding: .45rem 1rem; font-family: inherit; font-size: .8rem;
+      cursor: pointer; white-space: nowrap; transition: background .15s;
+    }
+    .btn-reset:hover  { background: #2a1010; border-color: #ef4444; }
+    .btn-reset:active { background: #3f1010; }
+    .btn-reset:disabled { opacity: .4; cursor: not-allowed; }
+    .refresh-dot {
+      display: inline-block; width: 7px; height: 7px;
+      border-radius: 50%; background: #22c55e;
+      margin-right: 6px; vertical-align: middle;
+    }
+
+    /* ── stat cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: .6rem;
+      margin-bottom: 1.2rem;
+    }
+    .card {
+      background: #181818;
+      border: 1px solid #252525;
+      border-radius: 8px;
+      padding: .7rem 1rem;
+    }
+    .card-label { font-size: .65rem; color: #555; text-transform: uppercase; letter-spacing: .07em; }
+    .card-value { font-size: 1.25rem; font-weight: bold; margin-top: .2rem; line-height: 1.2; }
+
+    /* ── section panels ── */
+    .panel {
+      background: #181818;
+      border: 1px solid #252525;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: .8rem;
+    }
+    .panel-title {
+      font-size: .7rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: .75rem;
+    }
+
+    /* ── pattern bar ── */
+    .pattern-bar { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .p-cell {
+      width: 32px; height: 32px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: bold;
+    }
+    .p-up   { background: #14532d; color: #4ade80; }
+    .p-down { background: #7f1d1d; color: #f87171; }
+    .p-empty { background: #1e1e1e; color: #333; }
+    .p-status { margin-left: 10px; color: #666; font-size: .85rem; }
+    .p-found  { color: #facc15; font-weight: bold; }
+
+    /* ── active trade ── */
+    .trade-row { display: flex; align-items: flex-start; gap: 1.5rem; }
+    .trade-dir { font-size: 2.2rem; font-weight: bold; line-height: 1; padding-top: .1rem; }
+    .trade-meta { font-size: .82rem; color: #888; line-height: 1.85; }
+    .trade-meta strong { color: #ccc; }
+    .trade-level {
+      display: inline-block;
+      background: #3b1f00; color: #fb923c;
+      border-radius: 4px; padding: 1px 7px;
+      font-size: .75rem; margin-left: 4px;
+    }
+
+    /* ── tables ── */
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    th {
+      text-align: left; padding: .3rem .5rem;
+      border-bottom: 1px solid #222;
+      color: #444; font-weight: normal;
+      font-size: .7rem; text-transform: uppercase; letter-spacing: .05em;
+    }
+    td { padding: .32rem .5rem; border-bottom: 1px solid #161616; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── bot log ── */
+    .log-box {
+      background: #111; border: 1px solid #1e1e1e; border-radius: 6px;
+      padding: .75rem; max-height: 180px; overflow-y: auto;
+      font-size: .75rem; color: #555; line-height: 1.6;
+    }
+
+    /* ── colours ── */
+    .green  { color: #4ade80; }
+    .red    { color: #f87171; }
+    .yellow { color: #facc15; }
+    .blue   { color: #60a5fa; }
+    .purple { color: #c084fc; }
+    .orange { color: #fb923c; }
+    .gray   { color: #666; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>{{MARKET_ASSET}} {{CANDLE_MINUTES}}m &nbsp;·&nbsp; Martingale Bot</h1>
+    <p class="sub">
+      <span class="refresh-dot"></span>Auto-refreshes every 10s
+      &nbsp;&nbsp;
+      <a href="/results">JSON Results</a>
+      &nbsp;·&nbsp;
+      <a href="/stats">Full Stats</a>
+    </p>
+  </div>
+  <button class="btn-reset" id="resetBtn" onclick="resetBot()">&#x21BA; Reset Bot</button>
+</header>
+
+<div id="root"></div>
+
+<script>
+  /* ── config injected at serve time ── */
+  const PATTERN_LENGTH = {{PATTERN_LENGTH}};
+
+  /* ── data injected at request time ── */
+  const d = __DATA__;
+  const s = d.stats;
+
+  /* ── helpers ── */
+  function fmt(n)   { return (n >= 0 ? "+" : "") + Number(n).toFixed(2); }
+  function arrow(r) { return r === "UP" ? "▲" : "▼"; }
+  function pct(n)   { return Number(n).toFixed(1) + "%"; }
+  function dirCls(r){ return r === "UP" ? "green" : "red"; }
+  function esc(str) { return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  let html = "";
+
+  /* ── stat cards ── */
+  const cards = [
+    { label: "Balance",        value: "$" + s.balance.toFixed(2),          cls: "yellow" },
+    { label: "Total P&L",      value: fmt(s.total_profit),                  cls: s.total_profit >= 0 ? "green" : "red" },
+    { label: "Today",          value: fmt(s.daily_profit),                  cls: s.daily_profit  >= 0 ? "green" : "red" },
+    { label: "This Week",      value: fmt(s.weekly_profit),                 cls: s.weekly_profit >= 0 ? "green" : "red" },
+    { label: "Win Rate",       value: pct(s.win_rate),                      cls: "blue"   },
+    { label: "W / L",          value: s.total_wins + " / " + s.total_losses, cls: ""      },
+    { label: "Trades",         value: s.total_trades,                       cls: ""       },
+    { label: "Max Lose Streak",value: s.max_losing_streak,                  cls: s.max_losing_streak > 3 ? "orange" : "gray" },
+  ];
+
+  html += '<div class="cards">';
+  cards.forEach(c => {
+    html += `<div class="card">
+      <div class="card-label">${c.label}</div>
+      <div class="card-value ${c.cls}">${c.value}</div>
+    </div>`;
+  });
+  html += "</div>";
+
+  /* ── live candle ── */
+  if (d.pending) {
+    html += `<div class="panel">
+      <div class="panel-title">Live Candle</div>
+      <div class="yellow" style="font-size:.95rem">&#x1F534; ${esc(d.pending)}</div>
+    </div>`;
+  }
+
+  /* ── active trade or pattern watch ── */
+  if (s.active_trade && s.active_trade.is_active) {
+    const t        = s.active_trade;
+    const dCls     = dirCls(t.direction);
+    const startedET = t.started_at
+      ? new Date(t.started_at).toLocaleString("en-US",
+          { timeZone: "America/New_York", hour12: true }) + " ET"
+      : "—";
+
+    html += `<div class="panel">
+      <div class="panel-title">&#x1F3AF; Active Trade</div>
+      <div class="trade-row">
+        <div class="trade-dir ${dCls}">${arrow(t.direction)} ${esc(t.direction)}</div>
+        <div class="trade-meta">
+          Bet: <strong>$${t.amount}</strong>
+          &nbsp;&nbsp;
+          Martingale Level: <strong>${t.martingale_level}</strong>
+          <span class="trade-level">LVL ${t.martingale_level}</span>
+          <br>
+          Entry candle: <strong>${esc(t.entry_candle_timestamp)}</strong>
+          (${esc(t.entry_candle_direction)})<br>
+          Session started: ${esc(startedET)}
+        </div>
+      </div>
+    </div>`;
+  } else {
+    /* pattern detection bar */
+    const streak  = d.streak || 0;
+    const recent  = d.history.slice(0, PATTERN_LENGTH).reverse();
+    let   cells   = "";
+
+    for (let i = 0; i < PATTERN_LENGTH; i++) {
+      const candle = recent[i];
+      if (candle) {
+        const cls = candle.result === "UP" ? "p-up" : "p-down";
+        cells += `<div class="p-cell ${cls}">${arrow(candle.result)}</div>`;
+      } else {
+        cells += `<div class="p-cell p-empty">·</div>`;
+      }
+    }
+
+    const statusTxt = streak >= PATTERN_LENGTH
+      ? `<span class="p-found">&#x2705; Pattern found! Entering trade...</span>`
+      : `<span>${streak}/${PATTERN_LENGTH} — watching...</span>`;
+
+    html += `<div class="panel">
+      <div class="panel-title">&#x1F4CA; Pattern Detection</div>
+      <div class="pattern-bar">${cells}<span class="p-status">${statusTxt}</span></div>
+    </div>`;
+  }
+
+  /* ── candle history ── */
+  let candleRows = "";
+  d.history.forEach(r => {
+    const cls = dirCls(r.result);
+    candleRows += `<tr>
+      <td class="gray">${esc(r.time)}</td>
+      <td class="${cls}">${arrow(r.result)} ${r.result}</td>
+    </tr>`;
+  });
+  html += `<div class="panel">
+    <div class="panel-title">Candle History</div>
+    <table>
+      <thead><tr><th>Time (ET)</th><th>Direction</th></tr></thead>
+      <tbody>${candleRows || "<tr><td colspan='2' class='gray'>No candles yet</td></tr>"}</tbody>
+    </table>
+  </div>`;
+
+  /* ── trade history ── */
+  if (s.trade_history && s.trade_history.length > 0) {
+    let rows = "";
+    s.trade_history.slice(0, 25).forEach(t => {
+      const resCls    = t.result === "WIN" ? "green" : "red";
+      const profCls   = t.profit >= 0 ? "green" : "red";
+      const profitFmt = fmt(t.profit);
+      rows += `<tr>
+        <td class="gray">${esc(t.executed_at_et || "—")}</td>
+        <td class="${dirCls(t.direction)}">${arrow(t.direction)} ${t.direction}</td>
+        <td>$${t.amount}</td>
+        <td class="${resCls}">${t.result}</td>
+        <td class="${profCls}">${profitFmt}</td>
+        <td class="gray">${t.martingale_level}</td>
+        <td class="gray">${esc(t.candle_result || "")}</td>
+      </tr>`;
+    });
+
+    html += `<div class="panel">
+      <div class="panel-title">Trade History (last 25)</div>
+      <table>
+        <thead>
+          <tr><th>Time</th><th>Direction</th><th>Bet</th><th>Result</th><th>P&L</th><th>Lvl</th><th>Candle</th></tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }
+
+  /* ── last trade summary ── */
+  if (s.last_trade) {
+    const lt     = s.last_trade;
+    const resCls = lt.result === "WIN" ? "green" : "red";
+    html += `<div class="panel">
+      <div class="panel-title">Last Trade</div>
+      <p style="font-size:.9rem;line-height:2">
+        <span class="${dirCls(lt.direction)}">${arrow(lt.direction)} ${lt.direction}</span>
+        &nbsp;→&nbsp;
+        <span class="${resCls}">${lt.result}</span>
+        &nbsp;&nbsp;
+        $${lt.amount} bet
+        &nbsp;|&nbsp;
+        P&amp;L: <span class="${lt.profit >= 0 ? "green" : "red"}">${fmt(lt.profit)}</span>
+        &nbsp;|&nbsp;
+        Level ${lt.martingale_level}
+        &nbsp;|&nbsp;
+        <span class="gray">${esc(lt.executed_at_et || "—")}</span>
+      </p>
+    </div>`;
+  }
+
+  /* ── bot status / log stream ── */
+  html += `<div class="panel">
+    <div class="panel-title">Bot Status</div>
+    <div class="log-box" id="logbox">
+      <div class="gray">Pattern length: ${PATTERN_LENGTH} &nbsp;|&nbsp; Last refresh: ${new Date().toLocaleTimeString()}</div>
+      ${s.active_trade && s.active_trade.is_active
+        ? `<div class="yellow">&#x26A1; Active Martingale session — level ${s.active_trade.martingale_level}</div>`
+        : `<div class="gray">Watching for alternating pattern...</div>`
+      }
+      ${s.current_losing_streak > 0
+        ? `<div class="orange">Current losing streak: ${s.current_losing_streak}</div>` : ""}
+    </div>
+  </div>`;
+
+  document.getElementById("root").innerHTML = html;
+
+  /* ── reset handler ── */
+  function resetBot() {
+    const btn = document.getElementById("resetBtn");
+    if (!confirm("Reset all bot stats, trade history, and candle history?\nThis cannot be undone.")) return;
+    btn.disabled = true;
+    btn.textContent = "Resetting...";
+    fetch("/reset", { method: "POST" })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) {
+          btn.textContent = "✓ Reset";
+          setTimeout(() => location.reload(), 800);
+        } else {
+          btn.textContent = "Error";
+          btn.disabled = false;
+        }
+      })
+      .catch(() => {
+        btn.textContent = "Error";
+        btn.disabled = false;
+      });
+  }
+</script>
+</body>
+</html>

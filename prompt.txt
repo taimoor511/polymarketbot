@@ -1,0 +1,331 @@
+
+ADD THESE FEATURES:
+frontend must show also these 
+# BTC Alternating Pattern Martingale Bot — Full AI Development Prompt
+
+Build a production-grade Node.js trading bot that monitors BTC 5-minute candle results from Polymarket-style market data and automatically executes a Martingale trading strategy based on alternating candle direction patterns.
+
+The system must be modular, fault tolerant, configurable via `.env`, and persist all trade/session statistics in JSON storage.
+
+══════════════════════════════════
+CORE OBJECTIVE
+══════════════════════════════════
+
+The bot continuously watches BTC 5-minute candle results.
+
+As soon as the current LIVE candle closes:
+
+1. Fetch the newest CLOSED candle immediately.
+2. Detect candle direction:
+
+   * UP
+   * DOWN
+3. Maintain rolling candle history.
+4. Detect alternating patterns.
+5. Enter Martingale trading mode when a valid pattern appears.
+6. Continue trading until first WIN.
+7. Reset and wait for next pattern.
+
+══════════════════════════════════
+PATTERN DETECTION
+══════════════════════════════════
+
+Pattern detection must be fully configurable using:
+
+```env
+FOUND_PATTREN_IN_SESSION=4
+```
+
+Examples:
+
+If:
+
+```env
+FOUND_PATTREN_IN_SESSION=4
+```
+
+Valid patterns:
+
+* UP, DOWN, UP, DOWN
+* DOWN, UP, DOWN, UP
+
+If:
+
+```env
+FOUND_PATTREN_IN_SESSION=5
+```
+
+Valid patterns:
+
+* UP, DOWN, UP, DOWN, UP
+* DOWN, UP, DOWN, UP, DOWN
+
+The bot must dynamically generate valid alternating patterns based on the configured length.
+
+══════════════════════════════════
+TRADING ENTRY RULE
+══════════════════════════════════
+
+When a valid alternating pattern is detected:
+
+Place trade on next session immediately in the SAME direction as the latest closed candle.
+
+Example:
+
+Pattern:
+UP, DOWN, UP, DOWN
+
+Latest candle:
+DOWN
+
+Trade:
+DOWN
+
+Another example:
+
+Pattern:
+DOWN, UP, DOWN, UP
+
+Latest candle:
+UP
+
+Trade:
+UP
+
+══════════════════════════════════
+MARTINGALE STRATEGY
+══════════════════════════════════
+
+Environment variables:
+
+```env
+STARTING_BET_AMOUNT=1
+BET_MULTIPLIER=2
+```
+
+Trading flow:
+
+Initial trade:
+
+```js
+betAmount = STARTING_BET_AMOUNT
+```
+
+If trade LOSES:
+
+* Multiply bet:
+
+```js
+betAmount = betAmount * BET_MULTIPLIER
+```
+
+* Wait for next candle close.
+* Fetch latest candle.
+* Place next trade in SAME direction as latest closed candle.
+
+Example:
+
+Detected pattern:
+UP, DOWN, UP, DOWN
+
+Latest candle:
+DOWN
+
+Trade:
+DOWN
+
+Next candle closes:
+UP
+
+Result:
+LOSS
+
+Next trade:
+UP
+
+Bet progression:
+1 → 2 → 4 → 8 → 16 ...
+
+Continue until first WIN.
+
+After WIN:
+
+* Immediately exit trading mode.
+* Reset Martingale amount to STARTING_BET_AMOUNT.
+* Wait for next valid pattern.
+
+══════════════════════════════════
+IMPORTANT SYSTEM RULES
+══════════════════════════════════
+
+The bot MUST obey ALL rules below:
+
+* Only ONE active Martingale session at a time.
+* Never allow parallel trades.
+* Ignore new patterns while already trading.
+* Enter trading mode ONLY after valid pattern detection.
+* Exit trading mode immediately after first WIN.
+* Fetch latest candle immediately after LIVE candle closes.
+* Prevent duplicate candle processing.
+* Prevent duplicate trade execution.
+* Handle RPC failures gracefully.
+* Handle network retry logic.
+* Handle API timeout recovery.
+* Automatically rotate RPC endpoints if one fails.
+* Use modular architecture.
+* Add detailed structured logging.
+* Add timestamps in ET timezone.
+* Add graceful shutdown support.
+* Add retry with exponential backoff.
+* Add configurable polling intervals.
+* Add heartbeat/status logs.
+
+══════════════════════════════════
+ENVIRONMENT VARIABLES
+══════════════════════════════════
+
+Use:
+
+```env
+# HTTP server port — open this in EC2 security group inbound rules
+PORT=3001
+
+# Polymarket CTF contract on Polygon
+CTF_ADDRESS=0x4D97DCd97eC945f40cF65F87097ACe5EA0476045
+
+# Polygon RPC endpoints — tried in order, first to respond wins
+RPC_URL_1=https://polygon-bor-rpc.publicnode.com
+RPC_URL_2=https://polygon.drpc.org
+RPC_URL_3=https://rpc.ankr.com/polygon/b9e2e0e9d5c0e2e0e9d5c0e2
+
+# Abort an RPC call after this many ms and try the next provider (default: 5000)
+RPC_TIMEOUT_MS=5000
+
+# Market to track — asset name and candle size in minutes (defaults: btc, 5)
+MARKET_ASSET=btc
+CANDLE_MINUTES=5
+
+# How many closed candles to keep in memory (default: 6)
+HISTORY_LENGTH=100
+
+# Pattern detection — alternating UP/DOWN streak length to trigger a trade
+FOUND_PATTREN_IN_SESSION=4
+
+# Martingale settings
+STARTING_BALANCE=63
+STARTING_BET_AMOUNT=1
+BET_MULTIPLIER=2
+PROFIT_MULTIPLIER_WIN_TRADE=1.90
+
+```
+
+══════════════════════════════════
+PROFIT CALCULATION
+══════════════════════════════════
+
+Ignore platform fees.
+
+Profit calculation formula:
+
+WIN:
+
+```js
+profit = (betAmount * PROFIT_MULTIPLIER_WIN_TRADE) - betAmount
+```
+
+LOSS:
+
+```js
+profit = -betAmount
+```
+
+Track:
+
+* total_profit
+* daily_profit
+* weekly_profit
+* monthly_profit
+* session_profit
+
+══════════════════════════════════
+JSON STORAGE
+══════════════════════════════════
+
+Persist ALL bot data inside:
+
+```txt
+data/stats.json
+```
+
+Example schema:
+
+```json
+{
+  "total_profit": 0,
+  "daily_profit": 0,
+  "weekly_profit": 0,
+  "monthly_profit": 0,
+
+  "total_losing_trade_streak": 0,
+  "current_losing_streak": 0,
+  "max_losing_streak": 0,
+
+  "current_day_trades": 0,
+  "previous_day_trades": 0,
+
+  "current_week_trades": 0,
+  "previous_week_trades": 0,
+
+  "current_month_trades": 0,
+  "previous_month_trades": 0,
+
+  "total_trades": 0,
+  "total_wins": 0,
+  "total_losses": 0,
+
+  "win_rate": 0,
+
+  "current_martingale_level": 0,
+  "largest_martingale_level": 0,
+
+  "active_trade": {
+    "is_active": false,
+    "session_id": "",
+    "direction": "",
+    "amount": 0,
+    "martingale_level": 0,
+    "entry_candle_timestamp": "",
+    "entry_candle_direction": "",
+    "started_at": ""
+  },
+
+  "last_trade": {
+    "direction": "UP",
+    "amount": 1,
+    "result": "WIN",
+    "profit": 0.9,
+    "martingale_level": 0,
+    "timestamp_et": ""
+  },
+
+  "trade_history": [
+    {
+      "session_id": "",
+      "direction": "UP",
+      "amount": 1,
+      "result": "WIN",
+      "profit": 0.9,
+      "martingale_level": 0,
+      "candle_timestamp": "",
+      "executed_at_et": ""
+    }
+  ],
+
+  "live_candle_history": [
+    {
+      "timestamp": "",
+      "direction": "UP"
+    }
+  ]
+}
+```

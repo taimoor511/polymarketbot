@@ -1,0 +1,163 @@
+2026-05-28T15:11:07.480Z [INFO   ] Engine starting — BTC 5m — patternLength=4 historyLength=100
+2026-05-28T15:11:07.481Z [INFO   ] Waiting 232.7s for next candle boundary...
+2026-05-28T15:11:07.481Z [INFO   ] HTTP server listening on port 3001
+2026-05-28T15:11:07.481Z [INFO   ] Dashboard → http://localhost:3001
+2026-05-28T15:15:00.201Z [INFO   ] Aligned to candle boundary — entering main loop
+2026-05-28T15:15:00.611Z [INFO   ] [market] Found btc-updown-5m-1779981300 — conditionId=0xa455c2712cb5ae2270bf40019a3dd324326b45bc9dfe73d9596cfe2cd5a14238 outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:20:18.011Z [RPC    ] Resolved: DOWN via RPC[0] in 17810ms — 0xa455c271...
+2026-05-28T15:20:18.012Z [INFO   ] Candle closed: DOWN at 11:20 AM ET
+2026-05-28T15:20:18.012Z [PATTERN] Streak 1/4 — latest=DOWN
+2026-05-28T15:20:18.054Z [INFO   ] [market] Found btc-updown-5m-1779981600 — conditionId=0xe6fdf23c6d11a2bb09197a1411066aa5e98d21d838020cd10cf23564c1b634ce outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:25:16.879Z [RPC    ] Resolved: DOWN via RPC[0] in 16678ms — 0xe6fdf23c...
+2026-05-28T15:25:16.880Z [INFO   ] Candle closed: DOWN at 11:25 AM ET
+2026-05-28T15:25:16.880Z [PATTERN] Streak 1/4 — latest=DOWN
+2026-05-28T15:25:16.927Z [INFO   ] [market] Found btc-updown-5m-1779981900 — conditionId=0x351247970042fa0f86bab34c19711b4e2587c29ec2ff48ac1263a84b06582709 outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:30:17.906Z [RPC    ] Resolved: UP via RPC[0] in 17703ms — 0x35124797...
+2026-05-28T15:30:17.907Z [INFO   ] Candle closed: UP at 11:30 AM ET
+2026-05-28T15:30:17.907Z [PATTERN] Streak 2/4 — latest=UP
+2026-05-28T15:30:17.974Z [INFO   ] [market] Found btc-updown-5m-1779982200 — conditionId=0x5ed435302df6ecf19ccbf665eb6ab3b371651a8a4fc35d50bbe3bebf4f1693b1 outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:35:51.970Z [RPC    ] Resolved: DOWN via RPC[0] in 51768ms — 0x5ed43530...
+2026-05-28T15:35:51.970Z [INFO   ] Candle closed: DOWN at 11:35 AM ET
+2026-05-28T15:35:51.971Z [PATTERN] Streak 3/4 — latest=DOWN
+2026-05-28T15:35:52.027Z [INFO   ] [market] Found btc-updown-5m-1779982500 — conditionId=0x68153964498c15eb1f64bfa5d79827cc88eef2aafead0d25f7327111c7796857 outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:40:16.506Z [RPC    ] Resolved: UP via RPC[0] in 16304ms — 0x68153964...
+2026-05-28T15:40:16.507Z [INFO   ] Candle closed: UP at 11:40 AM ET
+2026-05-28T15:40:16.507Z [PATTERN] Pattern detected! Last 4 candles: UP → DOWN → UP → DOWN (need 4, got 4)
+2026-05-28T15:40:16.508Z [TRADE  ] ENTER session=btc-1779982816507 direction=UP bet=$1
+2026-05-28T15:40:16.570Z [INFO   ] [market] Found btc-updown-5m-1779982800 — conditionId=0x9779729f4887fe77110075458488181d2bb6797561e4951f783cdee827c91719 outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:45:17.949Z [RPC    ] Resolved: UP via RPC[0] in 17747ms — 0x9779729f...
+2026-05-28T15:45:17.950Z [INFO   ] Candle closed: UP at 11:45 AM ET
+2026-05-28T15:45:17.950Z [TRADE  ] Evaluating open trade (direction=UP) — candle=UP
+2026-05-28T15:45:17.951Z [TRADE  ] WIN  direction=UP candle=UP bet=$1 profit=+0.9 balance=$63.9 winRate=100%
+2026-05-28T15:45:17.952Z [TRADE  ] EXIT session=btc-1779982816507 — returning to pattern watch
+2026-05-28T15:45:18.007Z [INFO   ] [market] Found btc-updown-5m-1779983100 — conditionId=0x3ffb51613e44b303c6b815e187551259862f58527b9f8c3b23390477e30651a5 outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:50:52.600Z [RPC    ] Resolved: DOWN via RPC[0] in 52400ms — 0x3ffb5161...
+2026-05-28T15:50:52.600Z [INFO   ] Candle closed: DOWN at 11:50 AM ET
+2026-05-28T15:50:52.601Z [PATTERN] Streak 2/4 — latest=DOWN
+2026-05-28T15:50:52.655Z [INFO   ] [market] Found btc-updown-5m-1779983400 — conditionId=0xa01290be355874756e3f03d2bdd36d8c670e66e3a7f282cbee28abe8da419433 outcomes=[Up,Down] (attempt 1)
+2026-05-28T15:55:18.030Z [RPC    ] Resolved: DOWN via RPC[0] in 17819ms — 0xa01290be...
+2026-05-28T15:55:18.033Z [INFO   ] Candle closed: DOWN at 11:55 AM ET
+2026-05-28T15:55:18.045Z [PATTERN] Streak 1/4 — latest=DOWN
+2026-05-28T15:55:18.184Z [INFO   ] [market] Found btc-updown-5m-1779983700 — conditionId=0x7a7efd88b067677c3caeefcac969b10469f5953c08b9a8f12da1f18f49919e08 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:00:16.679Z [RPC    ] Resolved: UP via RPC[0] in 16477ms — 0x7a7efd88...
+2026-05-28T16:00:16.680Z [INFO   ] Candle closed: UP at 12:00 PM ET
+2026-05-28T16:00:16.681Z [PATTERN] Streak 2/4 — latest=UP
+2026-05-28T16:00:16.845Z [INFO   ] [market] Found btc-updown-5m-1779984000 — conditionId=0x7c4383691ff6bd5b9c627ff0de3fb371e7cbc26a4111e30a16f4c8ef4a431180 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:05:19.623Z [RPC    ] Resolved: DOWN via RPC[0] in 19411ms — 0x7c438369...
+2026-05-28T16:05:19.623Z [INFO   ] Candle closed: DOWN at 12:05 PM ET
+2026-05-28T16:05:19.624Z [PATTERN] Streak 3/4 — latest=DOWN
+2026-05-28T16:05:19.700Z [INFO   ] [market] Found btc-updown-5m-1779984300 — conditionId=0x3d3e8e3ccfbc006803464955c5affb6127052d6eea021eca7a8dbf9ed6c1f10b outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:10:17.232Z [RPC    ] Resolved: UP via RPC[0] in 17031ms — 0x3d3e8e3c...
+2026-05-28T16:10:17.233Z [INFO   ] Candle closed: UP at 12:10 PM ET
+2026-05-28T16:10:17.233Z [PATTERN] Pattern detected! Last 4 candles: UP → DOWN → UP → DOWN (need 4, got 4)
+2026-05-28T16:10:17.234Z [TRADE  ] ENTER session=btc-1779984617233 direction=UP bet=$1
+2026-05-28T16:10:17.283Z [INFO   ] [market] Found btc-updown-5m-1779984600 — conditionId=0xb14fef1198cf751f83e5bb6b9839d7050f07f4603d2d37e95cca99dd78a18f78 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:15:18.089Z [RPC    ] Resolved: UP via RPC[0] in 17886ms — 0xb14fef11...
+2026-05-28T16:15:18.090Z [INFO   ] Candle closed: UP at 12:15 PM ET
+2026-05-28T16:15:18.090Z [TRADE  ] Evaluating open trade (direction=UP) — candle=UP
+2026-05-28T16:15:18.091Z [TRADE  ] WIN  direction=UP candle=UP bet=$1 profit=+0.9 balance=$64.8 winRate=100%
+2026-05-28T16:15:18.091Z [TRADE  ] EXIT session=btc-1779984617233 — returning to pattern watch
+2026-05-28T16:15:18.147Z [INFO   ] [market] Found btc-updown-5m-1779984900 — conditionId=0x09a29698172e4c2a17093f991c8081d6a60ef43e970ddb273000076e62c5855d outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:20:21.242Z [RPC    ] Resolved: UP via RPC[0] in 21040ms — 0x09a29698...
+2026-05-28T16:20:21.243Z [INFO   ] Candle closed: UP at 12:20 PM ET
+2026-05-28T16:20:21.243Z [PATTERN] Streak 1/4 — latest=UP
+2026-05-28T16:20:21.289Z [INFO   ] [market] Found btc-updown-5m-1779985200 — conditionId=0x9329facf4915d8a0bc91ff3ac6d5468bc6190aa70abefdcec1563c0b35fbd72c outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:25:16.764Z [RPC    ] Resolved: UP via RPC[0] in 16562ms — 0x9329facf...
+2026-05-28T16:25:16.765Z [INFO   ] Candle closed: UP at 12:25 PM ET
+2026-05-28T16:25:16.765Z [PATTERN] Streak 1/4 — latest=UP
+2026-05-28T16:25:16.811Z [INFO   ] [market] Found btc-updown-5m-1779985500 — conditionId=0x140cd7100c2ea5db27d6ed8c36902085e827c2d1e39d1cc3a92b24e00400b7d6 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:31:00.213Z [RPC    ] Resolved: DOWN via RPC[0] in 60013ms — 0x140cd710...
+2026-05-28T16:31:00.214Z [INFO   ] Candle closed: DOWN at 12:30 PM ET
+2026-05-28T16:31:00.214Z [PATTERN] Streak 2/4 — latest=DOWN
+2026-05-28T16:31:00.300Z [INFO   ] [market] Found btc-updown-5m-1779985800 — conditionId=0xdad03b4a765ef84e2d5fca660ee89300a610c289a387c5462b8c51470f904bc3 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:35:17.519Z [RPC    ] Resolved: UP via RPC[0] in 17317ms — 0xdad03b4a...
+2026-05-28T16:35:17.520Z [INFO   ] Candle closed: UP at 12:35 PM ET
+2026-05-28T16:35:17.520Z [PATTERN] Streak 3/4 — latest=UP
+2026-05-28T16:35:17.571Z [INFO   ] [market] Found btc-updown-5m-1779986100 — conditionId=0x126b02b7c9f4a70fea935d0442a6248498de6b0e37e2ae6b38caf7f46e203d52 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:40:53.212Z [RPC    ] Resolved: UP via RPC[0] in 53011ms — 0x126b02b7...
+2026-05-28T16:40:53.212Z [INFO   ] Candle closed: UP at 12:40 PM ET
+2026-05-28T16:40:53.212Z [PATTERN] Streak 1/4 — latest=UP
+2026-05-28T16:40:53.274Z [INFO   ] [market] Found btc-updown-5m-1779986400 — conditionId=0x4d224d786d34c07f6cc74032ae33058410ea9477301fd16649963906cb123890 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:45:17.062Z [RPC    ] Resolved: UP via RPC[0] in 16861ms — 0x4d224d78...
+2026-05-28T16:45:17.062Z [INFO   ] Candle closed: UP at 12:45 PM ET
+2026-05-28T16:45:17.062Z [PATTERN] Streak 1/4 — latest=UP
+2026-05-28T16:45:17.120Z [INFO   ] [market] Found btc-updown-5m-1779986700 — conditionId=0x5cab67d0e8358f77f08e87a0c6ff0b76be2c6a145b65a477d6558aaf5d7b99e2 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:50:20.656Z [RPC    ] Resolved: DOWN via RPC[0] in 20454ms — 0x5cab67d0...
+2026-05-28T16:50:20.656Z [INFO   ] Candle closed: DOWN at 12:50 PM ET
+2026-05-28T16:50:20.657Z [PATTERN] Streak 2/4 — latest=DOWN
+2026-05-28T16:50:20.698Z [INFO   ] [market] Found btc-updown-5m-1779987000 — conditionId=0x02a679b2a615b782fa49eff61ff7e2717b9c1446028f1ac3fad07586c03604e0 outcomes=[Up,Down] (attempt 1)
+2026-05-28T16:55:17.253Z [RPC    ] Resolved: DOWN via RPC[0] in 17051ms — 0x02a679b2...
+2026-05-28T16:55:17.253Z [INFO   ] Candle closed: DOWN at 12:55 PM ET
+2026-05-28T16:55:17.253Z [PATTERN] Streak 1/4 — latest=DOWN
+2026-05-28T16:55:17.304Z [INFO   ] [market] Found btc-updown-5m-1779987300 — conditionId=0x4143f28588b4cc7215fe10538ca4f31783d1e935661a89fc4d7a057f9e0dd47a outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:00:51.988Z [RPC    ] Resolved: UP via RPC[0] in 51788ms — 0x4143f285...
+2026-05-28T17:00:51.988Z [INFO   ] Candle closed: UP at 1:00 PM ET
+2026-05-28T17:00:51.989Z [PATTERN] Streak 2/4 — latest=UP
+2026-05-28T17:00:52.042Z [INFO   ] [market] Found btc-updown-5m-1779987600 — conditionId=0x85ff0de4496b4612f850e203d9ce22cee35dbba9e5b413f9bedb3961b3606434 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:05:15.497Z [RPC    ] Resolved: DOWN via RPC[0] in 15295ms — 0x85ff0de4...
+2026-05-28T17:05:15.498Z [INFO   ] Candle closed: DOWN at 1:05 PM ET
+2026-05-28T17:05:15.498Z [PATTERN] Streak 3/4 — latest=DOWN
+2026-05-28T17:05:15.557Z [INFO   ] [market] Found btc-updown-5m-1779987900 — conditionId=0xd72b00d5486d52d88ff5f42a5a6d965280157e4e616c99cec468835820d322c3 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:10:18.593Z [RPC    ] Resolved: UP via RPC[0] in 18392ms — 0xd72b00d5...
+2026-05-28T17:10:18.593Z [INFO   ] Candle closed: UP at 1:10 PM ET
+2026-05-28T17:10:18.593Z [PATTERN] Pattern detected! Last 4 candles: UP → DOWN → UP → DOWN (need 4, got 4)
+2026-05-28T17:10:18.594Z [TRADE  ] ENTER session=btc-1779988218594 direction=UP bet=$1
+2026-05-28T17:10:18.651Z [INFO   ] [market] Found btc-updown-5m-1779988200 — conditionId=0x69e15afbde5e34597a0efe4ecdc1025a01b24a587b18643313b26119d0c96230 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:15:18.405Z [RPC    ] Resolved: DOWN via RPC[0] in 18204ms — 0x69e15afb...
+2026-05-28T17:15:18.438Z [INFO   ] Candle closed: DOWN at 1:15 PM ET
+2026-05-28T17:15:18.438Z [TRADE  ] Evaluating open trade (direction=UP) — candle=DOWN
+2026-05-28T17:15:18.439Z [TRADE  ] LOSS direction=UP candle=DOWN bet=$1 profit=-1 balance=$63.8 winRate=66.7%
+2026-05-28T17:15:18.439Z [TRADE  ] LOSS → doubling bet: $2 direction=DOWN level=1
+2026-05-28T17:15:18.508Z [INFO   ] [market] Found btc-updown-5m-1779988500 — conditionId=0x05bb27f42f1054f5c1c67643908f5b3e269b31a9461da949bcdf7b119bb498b6 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:20:17.565Z [RPC    ] Resolved: DOWN via RPC[0] in 17364ms — 0x05bb27f4...
+2026-05-28T17:20:17.565Z [INFO   ] Candle closed: DOWN at 1:20 PM ET
+2026-05-28T17:20:17.565Z [TRADE  ] Evaluating open trade (direction=DOWN) — candle=DOWN
+2026-05-28T17:20:17.566Z [TRADE  ] WIN  direction=DOWN candle=DOWN bet=$2 profit=+1.8 balance=$65.6 winRate=75%
+2026-05-28T17:20:17.566Z [TRADE  ] EXIT session=btc-1779988218594 — returning to pattern watch
+2026-05-28T17:20:17.624Z [INFO   ] [market] Found btc-updown-5m-1779988800 — conditionId=0x3b7a45bd59212bc182aca259160bfa42932401e7cbfc5a2c525e2149f02a130d outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:25:18.117Z [RPC    ] Resolved: DOWN via RPC[0] in 17916ms — 0x3b7a45bd...
+2026-05-28T17:25:18.117Z [INFO   ] Candle closed: DOWN at 1:25 PM ET
+2026-05-28T17:25:18.118Z [PATTERN] Streak 1/4 — latest=DOWN
+2026-05-28T17:25:18.186Z [INFO   ] [market] Found btc-updown-5m-1779989100 — conditionId=0x3192d3cd03b8453e2fe7a2e4a03767e72aad76f407a5113e65cec5224101e500 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:27:59.297Z [INFO   ] SIGINT received — saving stats and shutting down
+2026-05-28T17:28:07.957Z [INFO   ] Engine starting — BTC 5m — patternLength=4 historyLength=100
+2026-05-28T17:28:07.957Z [INFO   ] Waiting 112.2s for next candle boundary...
+2026-05-28T17:28:07.958Z [INFO   ] HTTP server listening on port 3001
+2026-05-28T17:28:07.958Z [INFO   ] Dashboard → http://localhost:3001
+2026-05-28T17:30:00.202Z [INFO   ] Aligned to candle boundary — entering main loop
+2026-05-28T17:30:00.661Z [INFO   ] [market] Found btc-updown-5m-1779989400 — conditionId=0x4c8745344168c4cf7c379dd4532b7782970163370685f07545f6c41d02e9d431 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:34:00.066Z [INFO   ] SIGINT received — saving stats and shutting down
+2026-05-28T17:34:03.725Z [INFO   ] Engine starting — BTC 5m — patternLength=4 historyLength=100
+2026-05-28T17:34:03.726Z [INFO   ] Waiting 56.5s for next candle boundary...
+2026-05-28T17:34:03.726Z [INFO   ] HTTP server listening on port 3001
+2026-05-28T17:34:03.727Z [INFO   ] Dashboard → http://localhost:3001
+2026-05-28T17:35:00.200Z [INFO   ] Aligned to candle boundary — entering main loop
+2026-05-28T17:35:00.630Z [INFO   ] [market] Found btc-updown-5m-1779989700 — conditionId=0xa6ca87a24e6ac56214fc4817b70e97d5e9443d29d66f322f571f19554a8cc362 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:36:53.841Z [INFO   ] SIGINT received — saving stats and shutting down
+2026-05-28T17:36:56.542Z [INFO   ] Engine starting — BTC 5m — patternLength=4 historyLength=100
+2026-05-28T17:36:56.542Z [INFO   ] Waiting 183.7s for next candle boundary...
+2026-05-28T17:36:56.543Z [INFO   ] HTTP server listening on port 3001
+2026-05-28T17:36:56.543Z [INFO   ] Dashboard → http://localhost:3001
+2026-05-28T17:37:06.556Z [WARN   ] Bot state reset via dashboard
+2026-05-28T17:37:31.866Z [INFO   ] SIGINT received — saving stats and shutting down
+2026-05-28T17:37:48.135Z [INFO   ] Period rollover: new day 2026-05-28
+2026-05-28T17:37:48.135Z [INFO   ] Period rollover: new month 2026-05
+2026-05-28T17:37:48.135Z [INFO   ] Engine starting — BTC 5m — patternLength=4 historyLength=24
+2026-05-28T17:37:48.136Z [INFO   ] Waiting 132.1s for next candle boundary...
+2026-05-28T17:37:48.136Z [INFO   ] HTTP server listening on port 3001
+2026-05-28T17:37:48.136Z [INFO   ] Dashboard → http://localhost:3001
+2026-05-28T17:40:00.200Z [INFO   ] Aligned to candle boundary — entering main loop
+2026-05-28T17:40:00.610Z [INFO   ] [market] Found btc-updown-5m-1779990000 — conditionId=0x533edf17adf3291ce07708c024c384901cb529130b00c387cb186b1c99c1ecad outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:45:20.193Z [RPC    ] Resolved: DOWN via RPC[0] in 19992ms — 0x533edf17...
+2026-05-28T17:45:20.195Z [INFO   ] Candle closed: DOWN at 1:45 PM ET
+2026-05-28T17:45:20.195Z [PATTERN] Streak 1/4 — latest=DOWN
+2026-05-28T17:45:20.255Z [INFO   ] [market] Found btc-updown-5m-1779990300 — conditionId=0xdce4d3fc67864015ff51aad5c6c52d7e581251b9f1106a3badbf107c7b64d9d0 outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:50:50.936Z [RPC    ] Resolved: UP via RPC[0] in 50735ms — 0xdce4d3fc...
+2026-05-28T17:50:50.937Z [INFO   ] Candle closed: UP at 1:50 PM ET
+2026-05-28T17:50:50.939Z [PATTERN] Streak 2/4 — latest=UP
+2026-05-28T17:50:51.053Z [INFO   ] [market] Found btc-updown-5m-1779990600 — conditionId=0xe328c3e7ac6e04037f9299fd57a12bf479bf953ec2f01a3ead6f44153568feec outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:55:15.777Z [RPC    ] Resolved: DOWN via RPC[0] in 15576ms — 0xe328c3e7...
+2026-05-28T17:55:15.777Z [INFO   ] Candle closed: DOWN at 1:55 PM ET
+2026-05-28T17:55:15.777Z [PATTERN] Streak 3/4 — latest=DOWN
+2026-05-28T17:55:15.862Z [INFO   ] [market] Found btc-updown-5m-1779990900 — conditionId=0xc135336a54deeacabd8bf11cbc009b940190a262eb03869750e249c7d27d0cec outcomes=[Up,Down] (attempt 1)
+2026-05-28T17:59:42.252Z [INFO   ] SIGINT received — saving stats and shutting down

@@ -1,0 +1,15 @@
+2026-05-28T15:40:16.508Z [TRADE  ] ENTER session=btc-1779982816507 direction=UP bet=$1
+2026-05-28T15:45:17.950Z [TRADE  ] Evaluating open trade (direction=UP) — candle=UP
+2026-05-28T15:45:17.951Z [TRADE  ] WIN  direction=UP candle=UP bet=$1 profit=+0.9 balance=$63.9 winRate=100%
+2026-05-28T15:45:17.952Z [TRADE  ] EXIT session=btc-1779982816507 — returning to pattern watch
+2026-05-28T16:10:17.234Z [TRADE  ] ENTER session=btc-1779984617233 direction=UP bet=$1
+2026-05-28T16:15:18.090Z [TRADE  ] Evaluating open trade (direction=UP) — candle=UP
+2026-05-28T16:15:18.091Z [TRADE  ] WIN  direction=UP candle=UP bet=$1 profit=+0.9 balance=$64.8 winRate=100%
+2026-05-28T16:15:18.091Z [TRADE  ] EXIT session=btc-1779984617233 — returning to pattern watch
+2026-05-28T17:10:18.594Z [TRADE  ] ENTER session=btc-1779988218594 direction=UP bet=$1
+2026-05-28T17:15:18.438Z [TRADE  ] Evaluating open trade (direction=UP) — candle=DOWN
+2026-05-28T17:15:18.439Z [TRADE  ] LOSS direction=UP candle=DOWN bet=$1 profit=-1 balance=$63.8 winRate=66.7%
+2026-05-28T17:15:18.439Z [TRADE  ] LOSS → doubling bet: $2 direction=DOWN level=1
+2026-05-28T17:20:17.565Z [TRADE  ] Evaluating open trade (direction=DOWN) — candle=DOWN
+2026-05-28T17:20:17.566Z [TRADE  ] WIN  direction=DOWN candle=DOWN bet=$2 profit=+1.8 balance=$65.6 winRate=75%
+2026-05-28T17:20:17.566Z [TRADE  ] EXIT session=btc-1779988218594 — returning to pattern watch
