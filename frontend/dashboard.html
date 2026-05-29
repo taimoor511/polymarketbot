@@ -24,16 +24,44 @@
     .sub a { color: #555; text-decoration: none; }
     .sub a:hover { color: #888; }
 
-    /* ── reset button ── */
-    .btn-reset {
-      background: #1a1a1a; color: #ef4444;
-      border: 1px solid #3f1a1a; border-radius: 6px;
-      padding: .45rem 1rem; font-family: inherit; font-size: .8rem;
-      cursor: pointer; white-space: nowrap; transition: background .15s;
+    /* ── nav links ── */
+    .nav-links {
+      display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .6rem;
     }
-    .btn-reset:hover  { background: #2a1010; border-color: #ef4444; }
-    .btn-reset:active { background: #3f1010; }
-    .btn-reset:disabled { opacity: .4; cursor: not-allowed; }
+    .nav-link {
+      display: inline-block;
+      padding: .3rem .75rem;
+      border-radius: 5px;
+      font-family: inherit; font-size: .75rem;
+      text-decoration: none;
+      border: 1px solid;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .nav-link.blue   { color: #60a5fa; border-color: #1e3a5f; background: #0d1f33; }
+    .nav-link.blue:hover   { background: #1e3a5f; color: #93c5fd; }
+    .nav-link.green  { color: #4ade80; border-color: #14532d; background: #0a2e18; }
+    .nav-link.green:hover  { background: #14532d; color: #86efac; }
+    .nav-link.yellow { color: #facc15; border-color: #713f12; background: #2a1a00; }
+    .nav-link.yellow:hover { background: #713f12; color: #fde68a; }
+    .nav-link.purple { color: #c084fc; border-color: #4a1d96; background: #1e0a3c; }
+    .nav-link.purple:hover { background: #4a1d96; color: #ddd6fe; }
+    .nav-link.orange { color: #fb923c; border-color: #7c2d12; background: #2a1000; }
+    .nav-link.orange:hover { background: #7c2d12; color: #fed7aa; }
+
+    /* ── action buttons ── */
+    .btn-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .btn-reset, .btn-restart {
+      border-radius: 6px; padding: .45rem 1rem;
+      font-family: inherit; font-size: .8rem;
+      cursor: pointer; white-space: nowrap; transition: background .15s;
+      border: 1px solid;
+    }
+    .btn-reset   { background: #1a1a1a; color: #ef4444; border-color: #3f1a1a; }
+    .btn-reset:hover   { background: #2a1010; border-color: #ef4444; }
+    .btn-restart { background: #1a1a1a; color: #facc15; border-color: #3f2e00; }
+    .btn-restart:hover { background: #2a2000; border-color: #facc15; }
+    .btn-reset:disabled, .btn-restart:disabled { opacity: .4; cursor: not-allowed; }
     .refresh-dot {
       display: inline-block; width: 7px; height: 7px;
       border-radius: 50%; background: #22c55e;
@@ -130,15 +158,22 @@
 <header>
   <div>
     <h1>{{MARKET_ASSET}} {{CANDLE_MINUTES}}m &nbsp;·&nbsp; Martingale Bot</h1>
-    <p class="sub">
+    <div class="nav-links">
+      <a class="nav-link blue"   href="/results"      target="_blank">&#x1F4CA; JSON Results</a>
+      <a class="nav-link green"  href="/stats"        target="_blank">&#x1F4C8; Full Stats</a>
+      <a class="nav-link yellow" href="/logs"         target="_blank">&#x1F4C2; Logs</a>
+      <a class="nav-link purple" href="/logs/trades"  target="_blank">&#x1F4B0; Trade Log</a>
+      <a class="nav-link orange" href="/logs/rpc"     target="_blank">&#x26D3; RPC Log</a>
+      <a class="nav-link orange" href="/logs/errors"  target="_blank">&#x26A0; Error Log</a>
+    </div>
+    <p class="sub" style="margin-top:.5rem">
       <span class="refresh-dot"></span>Auto-refreshes every 10s
-      &nbsp;&nbsp;
-      <a href="/results">JSON Results</a>
-      &nbsp;·&nbsp;
-      <a href="/stats">Full Stats</a>
     </p>
   </div>
-  <button class="btn-reset" id="resetBtn" onclick="resetBot()">&#x21BA; Reset Bot</button>
+  <div class="btn-actions">
+    <button class="btn-restart" id="restartBtn" onclick="restartBot-Backend()">&#x23FB; Restart</button>
+    <button class="btn-reset"   id="resetBtn"   onclick="resetBot()">&#x21BA; Reset</button>
+  </div>
 </header>
 
 <div id="root"></div>
@@ -323,6 +358,31 @@
   </div>`;
 
   document.getElementById("root").innerHTML = html;
+
+  /* ── restart handler ── */
+  function restartBot() {
+    const btn = document.getElementById("restartBtn");
+    if (!confirm("Restart the bot process?\nIt will be back in ~5-10 seconds.\nActive trade state is preserved.")) return;
+    btn.disabled = true;
+    btn.textContent = "Restarting...";
+    fetch("/restart", { method: "POST" })
+      .then(r => r.json())
+      .then(() => {
+        btn.textContent = "⏳ Coming back...";
+        // Poll until the bot is back up, then reload
+        const check = setInterval(() => {
+          fetch("/results")
+            .then(r => { if (r.ok) { clearInterval(check); location.reload(); } })
+            .catch(() => {});
+        }, 2000);
+        // Safety: reload after 30s regardless
+        setTimeout(() => { clearInterval(check); location.reload(); }, 30_000);
+      })
+      .catch(() => {
+        btn.textContent = "Error";
+        btn.disabled = false;
+      });
+  }
 
   /* ── reset handler ── */
   function resetBot() {
