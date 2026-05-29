@@ -49,8 +49,7 @@ async function pollOnChain(conditionId, outcomes) {
         ]);
 
         if (denom > 0n) {
-          // Fetch both payouts so we can find the winner index explicitly —
-          // avoids assuming which index corresponds to UP vs DOWN.
+          // Fetch both payout numerators simultaneously
           const [p0, p1] = await Promise.all([
             Promise.race([
               ctfs[i].payoutNumerators(conditionId, 0),
@@ -61,6 +60,16 @@ async function pollOnChain(conditionId, outcomes) {
               new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), config.RPC_TIMEOUT)),
             ]),
           ]);
+
+          // Guard: denom > 0 but BOTH numerators = 0 means this RPC node read
+          // the denominator from a newer block than the numerators — split-read
+          // race condition. Skip this provider and try the next one.
+          if (p0 === 0n && p1 === 0n) {
+            logger.rpc(
+              `RPC[${i}] split-read: denom=${denom} but p0=p1=0 — skipping to next provider`
+            );
+            continue; // try next RPC in the for-loop
+          }
 
           const winnerIdx = p0 > 0n ? 0 : 1;
           const result    = outcomes[winnerIdx].toUpperCase();
