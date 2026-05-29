@@ -33,11 +33,13 @@ async function runCandle(candleOpenTs) {
     }
   }, 1_000);
 
-  // Fetch metadata while waiting — stops 15s before close to guarantee accuracy
-  const metaDeadline = candleCloseTs - 15_000;
-  const meta         = await fetchMarketMeta(candleOpenTs, metaDeadline);
-
-  await sleepUntil(candleCloseTs + config.BUFFER_MS);
+  // Run the meta fetch and the candle-close wait simultaneously.
+  // Deadline is 90s AFTER close so a slow Gamma API never causes a skipped candle.
+  const metaDeadline = candleCloseTs + 90_000;
+  const [meta] = await Promise.all([
+    fetchMarketMeta(candleOpenTs, metaDeadline),
+    sleepUntil(candleCloseTs + config.BUFFER_MS),
+  ]);
   clearInterval(tick);
 
   // ── settling ──────────────────────────────────────────────────────────────
