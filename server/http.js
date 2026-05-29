@@ -78,6 +78,13 @@ function startServer() {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify(state.stats, null, 2));
 
+    } else if (url === "/restart" && req.method === "POST") {
+      logger.warn("Restart requested via dashboard — exiting process for Railway to relaunch");
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ ok: true, message: "Restarting in ~5s..." }));
+      // Give the response time to flush, then exit with code 1 so Railway restarts us
+      setTimeout(() => process.exit(1), 500);
+
     } else if (url === "/reset" && req.method === "POST") {
       // Reset all bot state and stats to defaults (dev/testing use)
       const fresh = defaultStats();
