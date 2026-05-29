@@ -9,6 +9,18 @@ const logger = require("../utils/logger");
 const { getAlternatingStreak }           = require("../trading/pattern");
 const { defaultStats, saveStats }        = require("../storage/stats");
 
+const LOGS_DIR = path.join(__dirname, "../logs");
+
+// Log files available via /logs/:name
+const LOG_FILE_MAP = {
+  combined: "combined.log",
+  app:      "app.log",
+  trades:   "trades.log",
+  rpc:      "rpc.log",
+  errors:   "error.log",
+  pattern:  "pattern.log",
+};
+
 // Pre-process the HTML template once at startup — inject static config values
 const RAW_HTML = fs.readFileSync(
   path.join(__dirname, "../frontend/dashboard.html"),
@@ -81,6 +93,70 @@ function startServer() {
       logger.warn("Bot state reset via dashboard");
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ ok: true }));
+
+    } else if (url === "/logs" || url === "/logs/") {
+      // Index page listing all available log files
+      const links = Object.keys(LOG_FILE_MAP)
+        .map(name => `<li><a href="/logs/${name}">${name}</a> — ${LOG_FILE_MAP[name]}</li>`)
+        .join("\n");
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(`<!DOCTYPE html><html><head><meta charset="utf-8">
+        <title>Bot Logs</title>
+        <style>body{background:#111;color:#eee;font-family:monospace;padding:2rem}
+        a{color:#f90}li{margin:.4rem 0}</style></head>
+        <body><h2>Available Logs</h2><ul>${links}</ul>
+        <p><a href="/">← Dashboard</a></p></body></html>`);
+
+    } else if (url.startsWith("/logs/")) {
+      const name     = url.slice(6).replace(/[^a-z]/g, ""); // sanitise
+      const filename = LOG_FILE_MAP[name];
+      if (!filename) {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end(`Unknown log "${name}". Available: ${Object.keys(LOG_FILE_MAP).join(", ")}`);
+        return;
+      }
+      const filePath = path.join(LOGS_DIR, filename);
+      if (!fs.existsSync(filePath)) {
+        res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end(`(log file not yet created — bot may not have written any ${name} entries)`);
+        return;
+      }
+      // Serve last 500 lines so the page stays fast even after hours of logging
+      const allLines = fs.readFileSync(filePath, "utf8").split("\n");
+      const tail     = allLines.slice(-500).join("\n");
+      const ts       = new Date().toISOString();
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(`<!DOCTYPE html><html><head><meta charset="utf-8">
+        <meta http-equiv="refresh" content="15"/>
+        <title>${name} log</title>
+        <style>body{background:#0d0d0d;color:#ccc;font-family:monospace;padding:1rem;font-size:.8rem}
+        pre{white-space:pre-wrap;word-break:break-all}
+        .ts{color:#555}.nav{margin-bottom:1rem}
+        .nav a{color:#f90;margin-right:1rem;text-decoration:none}
+        span.info{color:#4ade80}span.warn{color:#facc15}
+        span.error{color:#ef4444}span.trade{color:#c084fc}
+        span.rpc{color:#60a5fa}span.pattern{color:#fb923c}</style>
+        </head><body>
+        <div class="nav">
+          <a href="/">Dashboard</a>
+          <a href="/logs">All Logs</a>
+          ${Object.keys(LOG_FILE_MAP).map(n =>
+            `<a href="/logs/${n}">${n}</a>`).join(" ")}
+        </div>
+        <h3 style="color:#f90">${name}.log</h3>
+        <p style="color:#555">Last 500 lines · auto-refreshes every 15s · as of ${ts}</p>
+        <pre id="log">${
+          tail
+            .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+            .replace(/\[INFO\s*\]/g,  '<span class="info">[INFO   ]</span>')
+            .replace(/\[WARN\s*\]/g,  '<span class="warn">[WARN   ]</span>')
+            .replace(/\[ERROR\s*\]/g, '<span class="error">[ERROR  ]</span>')
+            .replace(/\[TRADE\s*\]/g, '<span class="trade">[TRADE  ]</span>')
+            .replace(/\[RPC\s*\]/g,   '<span class="rpc">[RPC    ]</span>')
+            .replace(/\[PATTERN\s*\]/g,'<span class="pattern">[PATTERN]</span>')
+        }</pre>
+        <script>window.scrollTo(0,document.body.scrollHeight)</script>
+        </body></html>`);
 
     } else if (url === "/" || url === "/dashboard") {
       const html = HTML_TEMPLATE.replace("__DATA__", safeJson(buildPayload()));
