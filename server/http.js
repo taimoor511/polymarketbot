@@ -86,7 +86,7 @@ function startServer() {
       setTimeout(() => process.exit(1), 500);
 
     } else if (url === "/reset" && req.method === "POST") {
-      // Reset all bot state and stats to defaults (dev/testing use)
+      // ── reset in-memory state ─────────────────────────────────────────────
       const fresh = defaultStats();
       Object.assign(state.stats, fresh);
       state.history.length  = 0;
@@ -96,8 +96,20 @@ function startServer() {
       state.currentBet      = config.STARTING_BET;
       state.martingaleLevel = 0;
       state.sessionId       = null;
+
+      // ── wipe data/stats.json ──────────────────────────────────────────────
       saveStats(state.stats);
-      logger.warn("Bot state reset via dashboard");
+
+      // ── wipe all log files ────────────────────────────────────────────────
+      if (fs.existsSync(LOGS_DIR)) {
+        fs.readdirSync(LOGS_DIR)
+          .filter(f => f.endsWith(".log"))
+          .forEach(f => {
+            try { fs.writeFileSync(path.join(LOGS_DIR, f), ""); } catch {}
+          });
+      }
+
+      logger.warn("Bot fully reset via dashboard — state, stats and logs cleared");
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ ok: true }));
 
