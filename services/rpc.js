@@ -20,14 +20,23 @@ const ctfs = providers.map(p => new ethers.Contract(config.CTF_ADDRESS, CTF_ABI,
 
 /**
  * Polls the CTF contract across all configured RPC endpoints until the market
- * resolves (payout denominator goes from 0 to >0), or until 60 seconds elapse.
+ * resolves (payout denominator goes from 0 to >0), or until 90 seconds elapse.
  *
  * Returns "UP" | "DOWN" (mapped from outcomes array), or null on timeout.
+ *
+ * Outcome mapping: find which index has payout > 0 (the winner), then return
+ * outcomes[winnerIndex]. This works regardless of whether the market was created
+ * with Up at index 0 or index 1 — as long as the Gamma API outcomes array
+ * is in the same order as the contract registered them.
  */
 async function pollOnChain(conditionId, outcomes) {
   const start    = Date.now();
-  const deadline = start + 60_000;
+  const deadline = start + 90_000;
   const shortId  = conditionId.slice(0, 10) + "...";
+
+  // Pre-compute a lookup: normalised name → array index, e.g. {"UP":0,"DOWN":1}
+  const outcomeIndex = {};
+  outcomes.forEach((o, i) => { outcomeIndex[o.toUpperCase()] = i; });
 
   while (Date.now() < deadline) {
     for (let i = 0; i < ctfs.length; i++) {
@@ -40,25 +49,30 @@ async function pollOnChain(conditionId, outcomes) {
         ]);
 
         if (denom > 0n) {
-          // Market resolved — check whether UP (index 0) won
-          const upPayout = await Promise.race([
-            ctfs[i].payoutNumerators(conditionId, 0),
-            new Promise((_, rej) =>
-              setTimeout(() => rej(new Error("timeout")), config.RPC_TIMEOUT)
-            ),
+          // Fetch both payouts so we can find the winner index explicitly —
+          // avoids assuming which index corresponds to UP vs DOWN.
+          const [p0, p1] = await Promise.all([
+            Promise.race([
+              ctfs[i].payoutNumerators(conditionId, 0),
+              new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), config.RPC_TIMEOUT)),
+            ]),
+            Promise.race([
+              ctfs[i].payoutNumerators(conditionId, 1),
+              new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), config.RPC_TIMEOUT)),
+            ]),
           ]);
 
-          const result = upPayout > 0n
-            ? outcomes[0].toUpperCase()
-            : outcomes[1].toUpperCase();
+          const winnerIdx = p0 > 0n ? 0 : 1;
+          const result    = outcomes[winnerIdx].toUpperCase();
 
           logger.rpc(
-            `Resolved: ${result} via RPC[${i}] in ${Date.now()-start}ms — ${shortId}`
+            `Resolved: ${result} (idx=${winnerIdx}) via RPC[${i}] in ${Date.now()-start}ms` +
+            ` — p0=${p0} p1=${p1} outcomes=[${outcomes.join(",")}] cid=${shortId}`
           );
           return result;
         }
 
-        // denom === 0 means not yet resolved — no need to check other RPCs this round
+        // denom === 0: not yet resolved — skip remaining RPCs for this poll round
         break;
 
       } catch (e) {
@@ -69,7 +83,7 @@ async function pollOnChain(conditionId, outcomes) {
     await new Promise(r => setTimeout(r, 100));
   }
 
-  logger.error(`60s deadline exceeded — conditionId=${shortId}`);
+  logger.error(`90s deadline exceeded — conditionId=${shortId}`);
   return null;
 }
 
